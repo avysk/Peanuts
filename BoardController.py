@@ -1,11 +1,23 @@
+"""
+Controller to connect BoardModel with BoardWidget
+"""
 from Constants import Color, Rotation
 
-def _compose(f, g):
-    def comp(nx, ny):
-        return f(*g(nx, ny))
+def _compose(outer, inner):
+    """
+    Given an inner function, which takes two arguments and produces 2-tuple,
+    and an outer function, which takes two arguments, construct the
+    composition of inner function, unpacking, and outer function.
+    """
+    def comp(arg1, arg2):
+        return outer(*inner(arg1, arg2))
     return comp
 
 class Transform(object):
+    """
+    The class to do different transformations of the board:
+    mirroring, rotation and color swap
+    """
     def __init__(self, mirror=False, rotation=Rotation.NONE, swap=False):
         mirror = {False: lambda nx, ny: (nx, ny),
                 True: lambda nx, ny: (18 - nx, ny)}[mirror]
@@ -21,8 +33,9 @@ class BoardController(object):
         self._to_board = transform.to_board
         self._from_board = transform.from_board
         self._fix_color = transform.fix_color
-    def register_board_widget(self, bw):
-        self._board_widget = bw
+        self._board_widget = None
+    def register_board_widget(self, widget):
+        self._board_widget = widget
     def get_stones(self):
         stones = self._model.get_stones()
         def stone_to_board((nx, ny, s)):

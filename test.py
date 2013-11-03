@@ -1,27 +1,35 @@
-from Tkinter import *
+"""
+Helper to play with BoardWidget and BoardModel
+"""
+
+import Tkinter as T
 from BoardWidget import BoardWidget
 from BoardController import BoardController, Transform
 from BoardModel import BoardModel
 from Constants import Rotation
 
 def main():
-    root = Tk()
+    """
+    Setup demo position and run Tkinter.mainloop()
+    """
+    root = T.Tk()
     root.title('Peanuts')
     root.grid_columnconfigure(0, weight=1)
     root.grid_rowconfigure(0, weight=1)
 
     #t = Transform(mirror=False, rotation=Rotation.NONE, swap=False)
-    t = Transform(mirror=True, rotation=Rotation.NONE, swap=True)
-    m = BoardModel()
-    m.setup_test_position()
+    transform = Transform(mirror=True, rotation=Rotation.NONE, swap=True)
+    model = BoardModel()
+    model.setup_test_position()
 
-    c = BoardController(model=m, transform=t)
+    controller = BoardController(model=model, transform=transform)
 
-    b = BoardWidget(root, controller=c, width=500, height=500, background='white')
+    board = BoardWidget(root, controller=controller, width=500, height=500,
+            background='white')
 
-    b.grid(row=0, column=0, sticky=W+E+N+S)
+    board.grid(row=0, column=0, sticky=T.W+T.E+T.N+T.S)
 
-    mainloop()
+    T.mainloop()
 
 if __name__ == '__main__':
     main()
