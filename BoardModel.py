@@ -1,4 +1,6 @@
 from Constants import Color
+import sgflib
+import random
 
 _cswap = Color.change_color(True)
 
@@ -8,6 +10,10 @@ class BoardModel(object):
         self._board = self._alloc()
         self._ko = None
         self._move_color = Color.B
+        self._wrong = False
+        self._over = False
+        self._cursor = None
+        self._lm = None
     def _alloc(self):
         return [[None for i in xrange(self._size)]
                 for i in xrange(self._size)]
@@ -29,7 +35,10 @@ class BoardModel(object):
                 if self._board[nx][ny] is not None]
     def get_ko(self):
         return self._ko
-
+    def to_move(self):
+        return self._move_color
+    def last_move(self):
+        return self._lm
     def allowed(self, nx, ny):
         other_color = _cswap(self._move_color)
         if self._board[nx][ny] is not None:
@@ -60,7 +69,7 @@ class BoardModel(object):
             if suicide: return False
         return we_kill, killed
 
-    def do_move(self, move_x, move_y):
+    def do_move(self, move_x, move_y, auto=False):
         ok = self.allowed(move_x, move_y)
         assert(ok)
         we_kill, killed = ok
@@ -75,6 +84,9 @@ class BoardModel(object):
             for j in xrange(19):
                 if killed[i][j]:
                     self._board[i][j] = None
+        self._lm = (move_x, move_y)
+        if not auto:
+            self._check_if_wrong(move_x, move_y)
 
     def _get_neighbours(self, nx, ny):
         return [(x, y) for (x, y) in
@@ -170,3 +182,76 @@ class BoardModel(object):
                     # we had another ko candidate before
                     return None
         return ko
+
+    # -----------------------------------------------
+    def setup_sgf(self, sgf_string):
+        self._ko = None
+        self._lm = None
+        parser = sgflib.SGFParser(sgf_string)
+        collection = parser.parse()
+        self._cursor = collection.cursor()
+        node = self._cursor.node
+        data = node.data
+        assert(data['SZ'].data == ['19'])
+        assert(data['GM'].data == ['1'])
+        assert(data['FF'].data == ['4'])
+        if 'HA' in data.keys():
+            assert(data['HA'].data == ['0'])
+        self._board = self._alloc()
+        for b in data['AB']:
+            bx = BoardModel._char_to_index(b[0])
+            by = BoardModel._char_to_index(b[1])
+            self._board[bx][by] = Color.B
+        for w in data['AW']:
+            wx = BoardModel._char_to_index(w[0])
+            wy = BoardModel._char_to_index(w[1])
+            self._board[wx][wy] = Color.W
+        self._wrong = False
+        self._over = False
+
+    @staticmethod
+    def _char_to_index(ch):
+        assert(len(ch) == 1)
+        ch = ch.lower()
+        return ord(ch) - ord('a')
+
+    def _check_if_wrong(self, move_x, move_y):
+        children = self._cursor.children
+        if len(children) == 0:
+            print "Got it?", not self._wrong
+            return
+        for var in xrange(len(children)):
+            move = children[var].data['B'].data[0]
+            var_x = BoardModel._char_to_index(move[0])
+            var_y = BoardModel._char_to_index(move[1])
+            if var_x == move_x and var_y == move_y:
+                break
+        else:
+            self._wrong = True
+            self._over = True
+            print "Wrong and over"
+            return
+        node = self._cursor.next(var)
+        if 'WV' in node.data.keys():
+            self._wrong = True
+            print "Got into wrong variation."
+        children = self._cursor.children
+        l = len(children)
+        if l == 0:
+            print "Got it?", not self._wrong
+            return
+        var = random.randint(0, l - 1)
+        node = self._cursor.next(var)
+        reply = node.data['W'].data[0]
+        reply_x = BoardModel._char_to_index(reply[0])
+        reply_y = BoardModel._char_to_index(reply[1])
+        print "reply", reply_x, reply_y
+        self.do_move(reply_x, reply_y, auto=True)
+        if len(self._cursor.children) == 0:
+            self._wrong = True
+            print "Refuted."
+        else:
+            print self._cursor.children[0].data['B'].data
+
+
+

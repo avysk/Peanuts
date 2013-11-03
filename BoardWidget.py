@@ -51,8 +51,8 @@ class BoardWidget(Canvas):
         # Clean the board
         self.delete(ALL)
         # Draw the board border
-        start = self.step
-        end = self.step * 19
+        start = self.points[1]
+        end = self.points[19]
         self.create_polygon(start, start,
                 end, start,
                 end, end,
@@ -79,8 +79,22 @@ class BoardWidget(Canvas):
         if self._controller:
             for nx, ny, c in self._controller.get_stones():
                 self.add_stone(nx, ny, c)
+            # Last move
+            lm = self._controller.last_move()
+            if lm:
+                lmx, lmy = lm
+                x = self.points[lmx + 1]
+                y = self.points[lmy + 1]
+                c = {Color.B: '#808080',
+                     Color.W: '#A0A0A0'}[self._controller.to_move()]
+                o = {Color.B: 'black',
+                     Color.W: 'white'}[self._controller.to_move()]
+                r = hr * 2
+                self.create_oval(x - r, y - r, x + r, y + r,
+                        fill=c, outline='', width=1)
         # Ko
         self.update_ko()
+
 
     def update_ko(self):
         self.delete('ko')
@@ -110,10 +124,12 @@ class BoardWidget(Canvas):
         y, iy = self._find_point(event.y)
         nxb = ix - 1
         nyb = iy - 1
+        c = {Color.B: '#808080',
+             Color.W: '#F0F0F0'}[self._controller.to_move()]
         if ix > 0 and ix < 20 and iy > 0 and iy < 20:
             if self._controller.allowed(nxb, nyb):
                 self.create_oval(x - self.r, y - self.r, x + self.r, y +
-                        self.r, tag='ghost')
+                        self.r, tag='ghost', fill = c)
 
     def leave(self, event):
         self.delete('ghost')

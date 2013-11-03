@@ -56,3 +56,12 @@ class BoardController(object):
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update()
+    def to_move(self):
+        return self._fix_color(self._model.to_move())
+    def last_move(self):
+        lm = self._model.last_move()
+        if lm:
+            lmx, lmy = lm
+            return self._to_board(lmx, lmy)
+        else:
+            return None
