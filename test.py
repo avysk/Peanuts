@@ -1,6 +1,7 @@
 from Tkinter import *
 from BoardWidget import BoardWidget
 from BoardController import BoardController, Transform
+from BoardModel import BoardModel
 from Constants import Rotation
 
 root = Tk()
@@ -9,9 +10,10 @@ root.grid_columnconfigure(0, weight=1)
 root.grid_rowconfigure(0, weight=1)
 
 t = Transform(mirror=True, rotation=Rotation.NONE, swap=True)
-c = BoardController(transform=t)
+m = BoardModel()
+m.setup_test_position()
 
-c.setup_test_position()
+c = BoardController(model=m, transform=t)
 
 b = BoardWidget(root, controller=c, width=500, height=500, background='white')
 

@@ -47,7 +47,7 @@ class BoardWidget(Canvas):
         self.create_oval(x - self.r, y - self.r, x + self.r, y + self.r,
                 fill = c)
 
-    def _update(self):
+    def update(self):
         # Clean the board
         self.delete(ALL)
         # Draw the board border
@@ -102,7 +102,7 @@ class BoardWidget(Canvas):
 
     def resize(self, event):
         self._resize()
-        self._update()
+        self.update()
 
     def motion(self, event):
         self.delete('ghost')
