@@ -28,14 +28,18 @@ class Transform(object):
         self.fix_color = Color.change_color(swap)
 
 class BoardController(object):
-    def __init__(self, model, transform=Transform()):
+    def __init__(self, model, transform=None):
         self._model = model
+        if transform is None:
+            transform = Transform()
         self._to_board = transform.to_board
         self._from_board = transform.from_board
         self._fix_color = transform.fix_color
         self._board_widget = None
+
     def register_board_widget(self, widget):
         self._board_widget = widget
+
     def get_stones(self):
         stones = self._model.get_stones()
         def stone_to_board((nx, ny, s)):
@@ -43,21 +47,26 @@ class BoardController(object):
             c = self._fix_color(s)
             return (nxb, nyb, c)
         return map(stone_to_board, stones)
+
     def get_ko(self):
         ko = self._model.get_ko()
         if ko:
             return self._to_board(*ko)
         else:
             return None
+
     def allowed(self, nxb, nyb):
         nx, ny = self._from_board(nxb, nyb)
         return self._model.allowed(nx, ny)
+
     def add(self, nxb, nyb):
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update()
+
     def to_move(self):
         return self._fix_color(self._model.to_move())
+
     def last_move(self):
         lm = self._model.last_move()
         if lm:

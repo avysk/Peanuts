@@ -9,14 +9,16 @@ class BoardModel(object):
         self._size = size
         self._board = self._alloc()
         self._ko = None
+        self._last_move = None
         self._move_color = Color.B
         self._wrong = False
         self._over = False
         self._cursor = None
-        self._lm = None
+
     def _alloc(self):
         return [[None for i in xrange(self._size)]
                 for i in xrange(self._size)]
+
     def setup_test_position(self):
         B = Color.B
         W = Color.W
@@ -27,18 +29,22 @@ class BoardModel(object):
         for nx, ny, c in stones:
             self._board[nx][ny] = c
         self._ko = (1, 3)
+
     def get_stones(self):
-        stones = []
         return [(nx, ny, self._board[nx][ny])
                 for nx in xrange(self._size)
                 for ny in xrange(self._size)
                 if self._board[nx][ny] is not None]
+
     def get_ko(self):
         return self._ko
+
     def to_move(self):
         return self._move_color
+
     def last_move(self):
-        return self._lm
+        return self._last_move
+
     def allowed(self, nx, ny):
         other_color = _cswap(self._move_color)
         if self._board[nx][ny] is not None:
@@ -84,7 +90,7 @@ class BoardModel(object):
             for j in xrange(19):
                 if killed[i][j]:
                     self._board[i][j] = None
-        self._lm = (move_x, move_y)
+        self._last_move = (move_x, move_y)
         if not auto:
             self._check_if_wrong(move_x, move_y)
 
@@ -183,10 +189,11 @@ class BoardModel(object):
                     return None
         return ko
 
-    # -----------------------------------------------
+    # FIXME: methods below should go to some kind of SGF controller instead,
+    # they really don't have to do anything with BoardModel
     def setup_sgf(self, sgf_string):
         self._ko = None
-        self._lm = None
+        self._last_move = None
         parser = sgflib.SGFParser(sgf_string)
         collection = parser.parse()
         self._cursor = collection.cursor()
@@ -252,6 +259,3 @@ class BoardModel(object):
             print "Refuted."
         else:
             print self._cursor.children[0].data['B'].data
-
-
-
