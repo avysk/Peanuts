@@ -62,7 +62,7 @@ class BoardController(object):
     def add(self, nxb, nyb):
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
-        self._board_widget.update()
+        self._board_widget.update_board()
 
     def to_move(self):
         return self._fix_color(self._model.to_move())
