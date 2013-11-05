@@ -41,7 +41,7 @@ class Transform(object):
 class BoardController(object):
     def __init__(self, v_message):
         self._v_message = v_message
-        self._model = BoardModel()
+        self._model = None
         self._to_board = lambda x, y: (x, y)
         self._from_board = lambda x, y: (x, y)
         self._fix_color = lambda c: c
@@ -120,6 +120,7 @@ class BoardController(object):
         self._to_board = transform.to_board
         self._from_board = transform.from_board
         self._fix_color = transform.fix_color
+        self._model = BoardModel()
         if self.to_move() == Color.B:
             self._v_message.set('Black to move')
         else:
