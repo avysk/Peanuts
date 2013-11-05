@@ -126,7 +126,7 @@ class BoardWidget(Canvas):
         nxb = ix - 1
         nyb = iy - 1
         c = {Color.B: '#808080',
-             Color.W: '#F0F0F0'}[self._controller.to_move()]
+             Color.W: '#E0E0E0'}[self._controller.to_move()]
         if ix > 0 and ix < 20 and iy > 0 and iy < 20:
             if self._controller.allowed(nxb, nyb):
                 self.create_oval(x - self.r, y - self.r, x + self.r, y +
