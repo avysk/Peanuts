@@ -48,6 +48,16 @@ def main():
     # FIXME
     board._resize()
 
+    frame = T.Frame(root)
+    frame.grid(row=0, column=1, sticky=T.W+T.E+T.N+T.S)
+    frame.grid_rowconfigure(0, weight=1)
+
+    label = T.Label(frame, textvariable=controller.status)
+    label.grid(row=0, column=0, sticky=T.S+T.W)
+
+    button = T.Button(frame, text='Next')
+    button.grid(row=1, column=0, sticky=T.S+T.W)
+
     controller.open_collection('problems/')
     controller.next_problem()
 

@@ -6,6 +6,7 @@ from Problem import Problem
 from os import listdir
 from os.path import isfile, join
 import random
+from Tkinter import StringVar
 
 def _compose(outer, inner):
     """
@@ -43,6 +44,7 @@ class BoardController(object):
         self._directory = None
         self._collection = None
         self._problem = None
+        self.status = StringVar()
 
     def register_board_widget(self, widget):
         self._board_widget = widget
@@ -73,6 +75,10 @@ class BoardController(object):
         reply = self._problem.get_reply(nx, ny)
         # TODO
         if self._problem.is_over():
+            if self._problem.is_wrong():
+                self.status.set("Wrong")
+            else:
+                self.status.set("Right")
             print "Over"
         if self._problem.is_wrong():
             print "Wrong"
