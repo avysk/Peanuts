@@ -19,16 +19,13 @@ class BoardModel(object):
         return [[None for i in xrange(self._size)]
                 for i in xrange(self._size)]
 
-    def setup_test_position(self):
-        B = Color.B
-        W = Color.W
-        stones = [(3, 3, B), (2, 2, W), (3, 2, B), (2, 3, W), (2, 4, B),
-                (1, 4, W), (2, 5, B), (1, 5, W), (2, 6, B), (3, 1, W),
-                (4, 1, B), (2, 1, W), (5, 2, B),
-                (1, 2, W), (0, 2, B), (0, 4, B), (0, 3, W)]
-        for nx, ny, c in stones:
-            self._board[nx][ny] = c
-        self._ko = (1, 3)
+    def setup_position(self, setup):
+        self._ko = None
+        self._last_move = None
+        self._board = self._alloc()
+        for color, coords in setup.iteritems():
+            for nx, ny in coords:
+                self._board[nx][ny] = color
 
     def get_stones(self):
         return [(nx, ny, self._board[nx][ny])
@@ -75,7 +72,7 @@ class BoardModel(object):
             if suicide: return False
         return we_kill, killed
 
-    def do_move(self, move_x, move_y, auto=False):
+    def do_move(self, move_x, move_y):
         ok = self.allowed(move_x, move_y)
         assert(ok)
         we_kill, killed = ok
@@ -91,8 +88,6 @@ class BoardModel(object):
                 if killed[i][j]:
                     self._board[i][j] = None
         self._last_move = (move_x, move_y)
-        if not auto:
-            self._check_if_wrong(move_x, move_y)
 
     def _get_neighbours(self, nx, ny):
         return [(x, y) for (x, y) in
@@ -188,74 +183,3 @@ class BoardModel(object):
                     # we had another ko candidate before
                     return None
         return ko
-
-    # FIXME: methods below should go to some kind of SGF controller instead,
-    # they really don't have to do anything with BoardModel
-    def setup_sgf(self, sgf_string):
-        self._ko = None
-        self._last_move = None
-        parser = sgflib.SGFParser(sgf_string)
-        collection = parser.parse()
-        self._cursor = collection.cursor()
-        node = self._cursor.node
-        data = node.data
-        assert(data['SZ'].data == ['19'])
-        assert(data['GM'].data == ['1'])
-        assert(data['FF'].data == ['4'])
-        if 'HA' in data.keys():
-            assert(data['HA'].data == ['0'])
-        self._board = self._alloc()
-        for b in data['AB']:
-            bx = BoardModel._char_to_index(b[0])
-            by = BoardModel._char_to_index(b[1])
-            self._board[bx][by] = Color.B
-        for w in data['AW']:
-            wx = BoardModel._char_to_index(w[0])
-            wy = BoardModel._char_to_index(w[1])
-            self._board[wx][wy] = Color.W
-        self._wrong = False
-        self._over = False
-
-    @staticmethod
-    def _char_to_index(ch):
-        assert(len(ch) == 1)
-        ch = ch.lower()
-        return ord(ch) - ord('a')
-
-    def _check_if_wrong(self, move_x, move_y):
-        children = self._cursor.children
-        if len(children) == 0:
-            print "Got it?", not self._wrong
-            return
-        for var in xrange(len(children)):
-            move = children[var].data['B'].data[0]
-            var_x = BoardModel._char_to_index(move[0])
-            var_y = BoardModel._char_to_index(move[1])
-            if var_x == move_x and var_y == move_y:
-                break
-        else:
-            self._wrong = True
-            self._over = True
-            print "Wrong and over"
-            return
-        node = self._cursor.next(var)
-        if 'WV' in node.data.keys():
-            self._wrong = True
-            print "Got into wrong variation."
-        children = self._cursor.children
-        l = len(children)
-        if l == 0:
-            print "Got it?", not self._wrong
-            return
-        var = random.randint(0, l - 1)
-        node = self._cursor.next(var)
-        reply = node.data['W'].data[0]
-        reply_x = BoardModel._char_to_index(reply[0])
-        reply_y = BoardModel._char_to_index(reply[1])
-        print "reply", reply_x, reply_y
-        self.do_move(reply_x, reply_y, auto=True)
-        if len(self._cursor.children) == 0:
-            self._wrong = True
-            print "Refuted."
-        else:
-            print self._cursor.children[0].data['B'].data

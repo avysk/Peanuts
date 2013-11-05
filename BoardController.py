@@ -2,6 +2,10 @@
 Controller to connect BoardModel with BoardWidget
 """
 from Constants import Color, Rotation
+from Problem import Problem
+from os import listdir
+from os.path import isfile, join
+import random
 
 def _compose(outer, inner):
     """
@@ -36,6 +40,9 @@ class BoardController(object):
         self._from_board = transform.from_board
         self._fix_color = transform.fix_color
         self._board_widget = None
+        self._directory = None
+        self._collection = None
+        self._problem = None
 
     def register_board_widget(self, widget):
         self._board_widget = widget
@@ -63,6 +70,17 @@ class BoardController(object):
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update_board()
+        reply = self._problem.get_reply(nx, ny)
+        # TODO
+        if self._problem.is_over():
+            print "Over"
+        if self._problem.is_wrong():
+            print "Wrong"
+        if reply is None:
+            print "No reply"
+            return
+        self._model.do_move(*reply)
+        self._board_widget.update_board()
 
     def to_move(self):
         return self._fix_color(self._model.to_move())
@@ -74,3 +92,18 @@ class BoardController(object):
             return self._to_board(lmx, lmy)
         else:
             return None
+
+    def open_collection(self, directory):
+        # FIXME
+        self._directory = directory
+        self._collection = [f for f in listdir(directory)
+                if isfile(join(directory, f))]
+
+    def next_problem(self):
+        # FIXME
+        l = len(self._collection)
+        r = random.randint(0, l - 1)
+        f = open(join(self._directory, self._collection[r]))
+        self._problem = Problem(f.read())
+        self._model.setup_position(self._problem.get_setup())
+        self._board_widget.update_board()
