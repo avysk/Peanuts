@@ -11,6 +11,7 @@ class BoardWidget(Canvas):
         self.bind('<Motion>', self.motion)
         self.bind('<Leave>', self.leave)
         self.bind('<Button-1>', self.click)
+        self._resize()
 
     def _resize(self):
         w = self.winfo_width()
