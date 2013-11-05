@@ -73,25 +73,27 @@ class BoardController(object):
         return self._model.allowed(nx, ny)
 
     def add(self, nxb, nyb):
-        self._v_message.set('')
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update_board()
-        reply = self._problem.get_reply(nx, ny)
-        # TODO
-        if self._problem.is_over():
-            if self._problem.is_wrong():
-                self._v_message.set("Wrong")
+        if not self._problem.is_over():
+            reply = self._problem.get_reply(nx, ny)
+            # TODO
+            if self._problem.is_over():
+                if self._problem.is_wrong():
+                    self._v_message.set("Wrong")
+                else:
+                    self._v_message.set("Right")
+                print "Over"
             else:
-                self._v_message.set("Right")
-            print "Over"
-        if self._problem.is_wrong():
-            print "Wrong"
-        if reply is None:
-            print "No reply"
-            return
-        self._model.do_move(*reply)
-        self._board_widget.update_board()
+                self._v_message.set('')
+            if self._problem.is_wrong():
+                print "Wrong"
+            if reply is None:
+                print "No reply"
+                return
+            self._model.do_move(*reply)
+            self._board_widget.update_board()
 
     def to_move(self):
         return self._fix_color(self._model.to_move())
