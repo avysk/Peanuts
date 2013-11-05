@@ -84,13 +84,9 @@ class BoardController(object):
                     self._v_message.set("Wrong")
                 else:
                     self._v_message.set("Right")
-                print "Over"
             else:
                 self._v_message.set('')
-            if self._problem.is_wrong():
-                print "Wrong"
             if reply is None:
-                print "No reply"
                 return
             self._model.do_move(*reply)
             self._board_widget.update_board()
