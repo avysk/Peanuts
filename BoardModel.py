@@ -42,24 +42,24 @@ class BoardModel(object):
     def last_move(self):
         return self._last_move
 
-    def allowed(self, nx, ny):
+    def allowed(self, attempt_x, attempt_y):
         other_color = _cswap(self._move_color)
-        if self._board[nx][ny] is not None:
+        if self._board[attempt_x][attempt_y] is not None:
             return False
-        if self._ko == (nx, ny):
+        if self._ko == (attempt_x, attempt_y):
             return False
         # Check if we kill something
-        killed = self._find_killed(nx, ny, self._move_color)
+        killed = self._find_killed(attempt_x, attempt_y, self._move_color)
         we_kill = False
-        ns = self._get_neighbours(nx, ny)
+        ns = self._get_neighbours(attempt_x, attempt_y)
         for nx, ny in ns:
             if killed[nx][ny]:
                 we_kill = True
                 break
-        # If we do not kill anything, checki if the move is suicidal
+        # If we do not kill anything, check if the move is suicidal
         if not we_kill:
             suicide = True
-            self_killed = self._find_killed(nx, ny, other_color)
+            self_killed = self._find_killed(attempt_x, attempt_y, other_color)
             for nx, ny in ns:
                 if self._board[nx][ny] == other_color:
                     continue
