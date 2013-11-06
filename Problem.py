@@ -67,7 +67,7 @@ class Problem(object):
         # TODO: other Uligo and GoGrinder compatible ways to detect the wrong
         # variation
         # TODO: variation marked as wrong only in the last move of the variation
-        if 'WV' in node.data.keys():
+        if 'WV' in node.data.keys() or 'TR' in node.data.keys():
             self._wrong = True
         children = self._cursor.children
         replies = len(children)
