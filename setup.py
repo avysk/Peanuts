@@ -10,7 +10,8 @@ from setuptools import setup
 APP = ['Peanuts.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': False,
- 'iconfile': './Peanuts.icns'}
+ 'iconfile': './Peanuts.icns',
+ 'plist': './Peanuts-info.plist'}
 
 setup(
     app=APP,
