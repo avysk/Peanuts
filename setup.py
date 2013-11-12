@@ -15,7 +15,7 @@ DATA_FILES = ['BoardModel.py',
  'Problem.py',
  'sgflib.py',
  'typelib.py']
-OPTIONS = {'argv_emulation': True,
+OPTIONS = {'argv_emulation': False,
  'iconfile': './Peanuts.icns'}
 
 setup(
