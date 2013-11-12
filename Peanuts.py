@@ -1,5 +1,7 @@
 import Tkinter as T
 import ttk as TT
+import Image as I
+import ImageTk as IT
 from BoardController import BoardController
 from BoardWidget import BoardWidget
 
@@ -44,7 +46,10 @@ def main():
     right_frame.grid_rowconfigure(1, weight=1)
     right_frame.grid_rowconfigure(2, weight=0)
 
-    next_button = TT.Button(right_frame, text='Next', command=controller.next_problem)
+    img = I.open('images/next.png')
+    image_next = IT.PhotoImage(img)
+
+    next_button = TT.Button(right_frame, image=image_next, command=controller.next_problem)
     next_button.grid(row=1, column=0, sticky=T.S)
 
     resizer = TT.Sizegrip(right_frame)

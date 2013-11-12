@@ -8,13 +8,7 @@ Usage:
 from setuptools import setup
 
 APP = ['Peanuts.py']
-DATA_FILES = ['BoardModel.py',
-        'BoardController.py',
- 'BoardWidget.py',
- 'Constants.py',
- 'Problem.py',
- 'sgflib.py',
- 'typelib.py']
+DATA_FILES = []
 OPTIONS = {'argv_emulation': False,
  'iconfile': './Peanuts.icns'}
 
