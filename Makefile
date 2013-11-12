@@ -3,4 +3,4 @@
 RES_DIRS=problems,images
 app:
 	rm -rf build/ dist/
-	python setup.py py2app -r $(RES_DIRS)
+	python setup.py py2app -r $(RES_DIRS) --no-strip
