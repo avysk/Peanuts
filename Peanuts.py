@@ -1,13 +1,31 @@
+# vim: set fileencoding=utf-8
 import Tkinter as T
+import tkMessageBox
 import ttk as TT
 import Image as I
 import ImageTk as IT
 from BoardController import BoardController
 from BoardWidget import BoardWidget
 
+def about():
+    tkMessageBox.showinfo("About", u"Peanuts v1.0.0.\n© 2013, Alexey Vyskubov")
+
+def preferences():
+    tkMessageBox.showerror("Preferences", "Preferences are not implemented.",
+            icon=tkMessageBox.ERROR)
+
 def main():
     root0 = T.Tk()
     root0.title('Peanuts')
+    root0.createcommand('tkAboutDialog', about)
+    root0.createcommand('::tk::mac::ShowPreferences', preferences)
+
+    m = T.Menu(root0)
+    #m_apple = T.Menu(m, name='apple')
+    m_help = T.Menu(m, name='help')
+    #m.add_cascade(menu=m_apple)
+    m.add_cascade(menu=m_help, label='Help')
+    root0['menu'] = m
 
     root = TT.Frame(root0)
     root0.grid_columnconfigure(0, weight=1)
