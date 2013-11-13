@@ -1,11 +1,9 @@
 from Tkinter import *
 from Constants import Color
-import Image as I
-import ImageTk as IT
 
 class BoardWidget(Canvas):
 
-    def __init__(self, parent, controller=None, **options):
+    def __init__(self, parent, controller=None, pil=False, **options):
         Canvas.__init__(self, parent, **options)
         self._controller = controller
         controller.register_board_widget(self)
@@ -13,8 +11,13 @@ class BoardWidget(Canvas):
         self.bind('<Motion>', self.motion)
         self.bind('<Leave>', self.leave)
         self.bind('<Button-1>', self.click)
-        self.image = I.open('images/wood.png')
-        self.texture = IT.PhotoImage(self.image)
+        self.image = None
+        self.texture = None
+        if pil:
+            import Image as I
+            import ImageTk as IT
+            self.image = I.open('images/wood.png')
+            self.texture = IT.PhotoImage(self.image)
         self._resize()
 
     def _resize(self):
@@ -56,7 +59,9 @@ class BoardWidget(Canvas):
         # Clean the board
         self.delete(ALL)
         # Draw the texture
-        self.create_image(self.points[10], self.points[10], image=self.texture)
+        if self.texture:
+            center = self.points[10]
+            self.create_image(center, center, image=self.texture)
         # Draw the board border
         start = self.points[1]
         end = self.points[19]

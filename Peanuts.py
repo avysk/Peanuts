@@ -2,10 +2,18 @@
 import Tkinter as T
 import tkMessageBox
 import ttk as TT
-import Image as I
-import ImageTk as IT
 from BoardController import BoardController
 from BoardWidget import BoardWidget
+
+try:
+    import Image as I
+    import ImageTk as IT
+    def have_pil():
+        return True
+except:
+    def have_pil():
+        return False
+
 
 def about():
     tkMessageBox.showinfo("About", u"Peanuts v1.0.0.\n© 2013, Alexey Vyskubov")
@@ -89,7 +97,7 @@ def setup_left_frame(root):
     v_message = T.StringVar()
     controller = BoardController(v_message)
     # Setup board
-    board = BoardWidget(left_frame, controller=controller,
+    board = BoardWidget(left_frame, controller=controller, pil=have_pil(),
             width=500, height=500,
             background='yellow', highlightthickness=0,
             cursor='hand1')
@@ -111,14 +119,18 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
     right_frame.grid_rowconfigure(1, weight=1)
     right_frame.grid_rowconfigure(2, weight=0)
     # Next problem button
-    img = I.open('images/next.png')
-    image_next = IT.PhotoImage(img)
-    next_button = TT.Button(right_frame, image=image_next,
-            command=controller.next_problem)
+    if have_pil():
+        img = I.open('images/next.png')
+        image_next = IT.PhotoImage(img)
+        next_button = TT.Button(right_frame, image=image_next,
+                command=controller.next_problem)
+        # Tk bug workaround: images are garbage-collected if the only reference
+        # belongs to the widget
+        static_vars['images'].append(image_next)
+    else:
+        next_button = TT.Button(right_frame, text='Next problem',
+                command=controller.next_problem)
     next_button.grid(row=1, column=0, sticky=T.S)
-    # Tk bug workaround: images are garbage-collected if the only reference
-    # belongs to the widget
-    static_vars['images'].append(image_next)
     # The nice widget to indicate the place to change window size
     resizer = TT.Sizegrip(right_frame)
     resizer.grid(row=2, column=0, sticky=T.S+T.E)
@@ -129,6 +141,8 @@ def main():
     setup_right_frame(root, controller)
     controller.open_collection('problems/')
     controller.next_problem()
+    if not have_pil():
+        tkMessageBox.showwarning("No PIL", "No PIL library found.")
 
     T.mainloop()
 
