@@ -1,4 +1,4 @@
 Peanuts
 =======
 
-The program to practice solving go problems
+The program to practice solving go problems.
