@@ -1,21 +1,22 @@
 # vim: set fileencoding=utf-8
+import sys
 import Tkinter as T
 import tkMessageBox
 try:
     import ttk as TT
-    def have_ttk():
-        return True
+    def has_ttk():
+        return not 'nottk' in sys.argv
 except:
-    def have_ttk():
+    def has_ttk():
         return False
 
 try:
     import Image as I
     import ImageTk as IT
-    def have_pil():
-        return True
+    def has_pil():
+        return not 'nopil' in sys.argv
 except:
-    def have_pil():
+    def has_pil():
         return False
 
 from BoardController import BoardController
@@ -103,7 +104,7 @@ def setup_left_frame(root):
     v_message = T.StringVar()
     controller = BoardController(v_message)
     # Setup board
-    board = BoardWidget(left_frame, controller=controller, pil=have_pil(),
+    board = BoardWidget(left_frame, controller=controller, pil=has_pil(),
             width=500, height=500,
             background='yellow', highlightthickness=0,
             cursor='hand1')
@@ -125,7 +126,7 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
     right_frame.grid_rowconfigure(1, weight=1)
     right_frame.grid_rowconfigure(2, weight=0)
     # Next problem button
-    if have_pil():
+    if has_pil():
         img = I.open('images/next.png')
         image_next = IT.PhotoImage(img)
         next_button = TT.Button(right_frame, image=image_next,
@@ -142,7 +143,7 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
     resizer.grid(row=2, column=0, sticky=T.S+T.E)
 
 def main():
-    if not have_ttk():
+    if not has_ttk():
         tkMessageBox.showerror("No ttk",
                 "No ttk module (Python/Tkinter too old?).\nPeanuts won't run.")
     else:
@@ -151,7 +152,7 @@ def main():
         setup_right_frame(root, controller)
         controller.open_collection('problems/')
         controller.next_problem()
-        if not have_pil():
+        if not has_pil():
             tkMessageBox.showwarning("No PIL", "No PIL library found.")
         T.mainloop()
 
