@@ -8,8 +8,6 @@ try:
 except:
     def have_ttk():
         return False
-from BoardController import BoardController
-from BoardWidget import BoardWidget
 
 try:
     import Image as I
@@ -20,6 +18,8 @@ except:
     def have_pil():
         return False
 
+from BoardController import BoardController
+from BoardWidget import BoardWidget
 
 def about():
     tkMessageBox.showinfo("About", u"Peanuts v1.0.0.\n© 2013, Alexey Vyskubov")
