@@ -149,7 +149,7 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
         next_button = TT.Button(right_frame, image=image_next,
                 command=controller.next_problem)
         # Tk bug workaround: images are garbage-collected if the only reference
-        # belongs to the widget
+        # belongs to a widget
         static_vars['images'].append(image_next)
     else:
         next_button = TT.Button(right_frame, text='Next problem',
