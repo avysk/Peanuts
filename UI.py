@@ -132,6 +132,12 @@ class UI(object):
         # Button box is resizable
         right_frame.grid_rowconfigure(1, weight=1)
         right_frame.grid_rowconfigure(2, weight=0)
+        # Button box
+        buttonbox = TT.Frame(right_frame)
+        buttonbox.grid(row=1, column=0, sticky=T.W+T.E+T.N+T.S)
+        buttonbox.grid_columnconfigure(0, weight=1)
+        buttonbox.grid_rowconfigure(0, weight=1)
+        buttonbox.grid_rowconfigure(1, weight=1)
         # Next problem button
         image_next = None
         if self._has_pil:
@@ -140,7 +146,7 @@ class UI(object):
             # Tk bug workaround: images are garbage-collected if the only
             # reference belongs to a widget
             self._images.append(image_next)
-        next_button = TT.Button(right_frame,
+        next_button = TT.Button(buttonbox,
                 image=image_next, text='Next problem',
                 compound=T.BOTTOM,
                 takefocus=False,
