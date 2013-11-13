@@ -56,8 +56,8 @@ class Transform(object):
         self.fix_color = Color.change_color(swap)
 
 class BoardController(object):
-    def __init__(self, v_message):
-        self._v_message = v_message
+    def __init__(self):
+        self._v_message = None
         self._model = None
         self._to_board = lambda x, y: (x, y)
         self._from_board = lambda x, y: (x, y)
@@ -66,6 +66,9 @@ class BoardController(object):
         self._directory = None
         self._collection = None
         self._problem = None
+
+    def register_message_var(self, v):
+        self._v_message = v
 
     def register_board_widget(self, widget):
         self._board_widget = widget
@@ -90,6 +93,7 @@ class BoardController(object):
         return self._model.allowed(nx, ny)
 
     def add(self, nxb, nyb):
+        assert(self._v_message)
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update_board()
@@ -126,6 +130,7 @@ class BoardController(object):
                 if isfile(join(directory, f))]
 
     def next_problem(self):
+        assert(self._v_message)
         # FIXME
         l = len(self._collection)
         r = randint(0, l - 1)
