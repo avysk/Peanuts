@@ -1,7 +1,13 @@
 # vim: set fileencoding=utf-8
 import Tkinter as T
 import tkMessageBox
-import ttk as TT
+try:
+    import ttk as TT
+    def have_ttk():
+        return True
+except:
+    def have_ttk():
+        return False
 from BoardController import BoardController
 from BoardWidget import BoardWidget
 
@@ -136,15 +142,18 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
     resizer.grid(row=2, column=0, sticky=T.S+T.E)
 
 def main():
-    root = create_root()
-    controller = setup_left_frame(root)
-    setup_right_frame(root, controller)
-    controller.open_collection('problems/')
-    controller.next_problem()
-    if not have_pil():
-        tkMessageBox.showwarning("No PIL", "No PIL library found.")
-
-    T.mainloop()
+    if not have_ttk():
+        tkMessageBox.showerror("No ttk",
+                "No ttk module (Python/Tkinter too old?).\nPeanuts won't run.")
+    else:
+        root = create_root()
+        controller = setup_left_frame(root)
+        setup_right_frame(root, controller)
+        controller.open_collection('problems/')
+        controller.next_problem()
+        if not have_pil():
+            tkMessageBox.showwarning("No PIL", "No PIL library found.")
+        T.mainloop()
 
 if __name__ == '__main__':
     main()
