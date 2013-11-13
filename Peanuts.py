@@ -83,6 +83,7 @@ def create_root():
     """
     toplevel = T.Tk()
     toplevel.title('Peanuts')
+    toplevel.minsize(520, 420)
     # Connect to Mac OS X system menu, "About" and "Preferences..."
     toplevel.createcommand('tkAboutDialog', about)
     toplevel.createcommand('::tk::mac::ShowPreferences', preferences)
@@ -143,17 +144,18 @@ def setup_right_frame(root, controller, static_vars={'images':[]}):
     right_frame.grid_rowconfigure(1, weight=1)
     right_frame.grid_rowconfigure(2, weight=0)
     # Next problem button
+    image_next = None
     if has_pil():
         img = I.open('images/next.png')
         image_next = IT.PhotoImage(img)
-        next_button = TT.Button(right_frame, image=image_next,
-                command=controller.next_problem)
         # Tk bug workaround: images are garbage-collected if the only reference
         # belongs to a widget
         static_vars['images'].append(image_next)
-    else:
-        next_button = TT.Button(right_frame, text='Next problem',
-                command=controller.next_problem)
+    next_button = TT.Button(right_frame,
+            image=image_next, text='Next problem',
+            compound=T.BOTTOM,
+            takefocus=False,
+            command=controller.next_problem)
     next_button.grid(row=1, column=0, sticky=T.S)
     # The nice widget to indicate the place to change window size
     resizer = TT.Sizegrip(right_frame)
