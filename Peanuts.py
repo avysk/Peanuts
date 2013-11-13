@@ -19,42 +19,62 @@ def put_square_board(board, padding):
     Put given board widget in the top left corner of padding frame and make
     sure it is always as big as possible but is a square.
     """
-    def square_it(e, old_size={}):
-        # This is horrible hack: old_size['size'] plays the role of static
-        # variable in C; bypassing board.place when the size is the same helps
-        # to do redraws during resizing reasonably fast
-        right_size = min(e.width, e.height)
-        if old_size.get('size') == right_size:
-            print "no need"
+    def square_it(static_vars):
+        """
+        Update board size.
+        """
+        assert(static_vars['queued'])
+        # Allow to queue update again
+        static_vars['queued'] = False
+        desired = min(padding.winfo_width(), padding.winfo_height())
+        if static_vars.get('size') == desired:
+            # Do nothing if no changes in size
             return
         else:
-            old_size['size'] = right_size
-        board.place(in_=padding, x=0, y=0, width=right_size, height=right_size)
+            static_vars['size'] = desired
+        board.place(in_=padding, x=0, y=0, width=desired, height=desired)
 
-    padding.bind('<Configure>', square_it)
+    def queue_update(e, static_vars={'queued': False, 'size': None}):
+        """
+        Queue update of the board size, but only if it's not already queued.
+        """
+        if not static_vars['queued']:
+            static_vars['queued'] = True
+            board.after_idle(square_it, static_vars)
 
-def main():
-    root0 = T.Tk()
-    root0.title('Peanuts')
-    root0.createcommand('tkAboutDialog', about)
-    root0.createcommand('::tk::mac::ShowPreferences', preferences)
+    padding.bind('<Configure>', queue_update)
 
-    m = T.Menu(root0)
-    #m_apple = T.Menu(m, name='apple')
+def create_root():
+    """
+    Create toplevel window, setup menus and fill toplevel with ttk frame.
+    Return frame.
+    """
+    toplevel = T.Tk()
+    toplevel.title('Peanuts')
+    # Connect to Mac OS X system menu, "About" and "Preferences..."
+    toplevel.createcommand('tkAboutDialog', about)
+    toplevel.createcommand('::tk::mac::ShowPreferences', preferences)
+    # Connect to Mac OS X system Help menu
+    m = T.Menu(toplevel)
     m_help = T.Menu(m, name='help')
-    #m.add_cascade(menu=m_apple)
     m.add_cascade(menu=m_help, label='Help')
-    root0['menu'] = m
-
-    root = TT.Frame(root0)
-    root0.grid_columnconfigure(0, weight=1)
-    root0.grid_rowconfigure(0, weight=1)
+    # Add menu to the toplevel
+    toplevel['menu'] = m
+    # Configure grid geometry: allow resizing for inner widget
+    toplevel.grid_columnconfigure(0, weight=1)
+    toplevel.grid_rowconfigure(0, weight=1)
+    root = TT.Frame(toplevel)
     root.grid(row=0, column=0, sticky=T.W+T.E+T.N+T.S)
     root.grid_columnconfigure(0, weight=1)
     root.grid_columnconfigure(1, weight=0)
     root.grid_rowconfigure(0, weight=1)
+    return root
 
-    # Left frame
+def setup_left_frame(root):
+    """
+    Setup the left part of the interface: BoardWidget and message label. Return
+    board controller.
+    """
     left_frame = TT.Frame(root)
     left_frame.grid(row=0, column=0, sticky=T.W+T.E+T.N+T.S)
     left_frame.grid_columnconfigure(0, weight=1)
@@ -62,25 +82,27 @@ def main():
     left_frame.grid_rowconfigure(0, weight=1)
     # Caption is of fixed height
     left_frame.grid_rowconfigure(1, weight=0)
-
     # Let's create padding frame for the board
     padding = TT.Frame(left_frame, width=700, height=700)
     padding.grid(row=0, column=0, sticky=T.W+T.E+T.N+T.S)
-
+    # Setup board controller
     v_message = T.StringVar()
     controller = BoardController(v_message)
+    # Setup board
     board = BoardWidget(left_frame, controller=controller,
             width=500, height=500,
             background='yellow', highlightthickness=0,
             cursor='hand1')
-
-    # Now put the board in the padding frame
     put_square_board(board, padding)
-
+    # Setup message label
     label_message = TT.Label(left_frame, textvariable=v_message)
     label_message.grid(row=1, column=0)
+    return controller
 
-    # Right frame
+def setup_right_frame(root, controller, static_vars={'images':[]}):
+    """
+    Setup the right part of the interface.
+    """
     right_frame = TT.Frame(root)
     right_frame.grid(row=0, column=1, sticky=T.W+T.E+T.N+T.S)
     right_frame.grid_columnconfigure(0, weight=1)
@@ -88,17 +110,23 @@ def main():
     # Button box is resizable
     right_frame.grid_rowconfigure(1, weight=1)
     right_frame.grid_rowconfigure(2, weight=0)
-
+    # Next problem button
     img = I.open('images/next.png')
     image_next = IT.PhotoImage(img)
-
     next_button = TT.Button(right_frame, image=image_next,
             command=controller.next_problem)
     next_button.grid(row=1, column=0, sticky=T.S)
-
+    # Tk bug workaround: images are garbage-collected if the only reference
+    # belongs to the widget
+    static_vars['images'].append(image_next)
+    # The nice widget to indicate the place to change window size
     resizer = TT.Sizegrip(right_frame)
     resizer.grid(row=2, column=0, sticky=T.S+T.E)
 
+def main():
+    root = create_root()
+    controller = setup_left_frame(root)
+    setup_right_frame(root, controller)
     controller.open_collection('problems/')
     controller.next_problem()
 
