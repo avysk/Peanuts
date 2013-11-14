@@ -141,7 +141,7 @@ class UI(object):
         # Next problem button
         image_next = None
         if self._has_pil:
-            img = I.open('images/next.png')
+            img = I.open('images/next.gif')
             image_next = IT.PhotoImage(img)
             # Tk bug workaround: images are garbage-collected if the only
             # reference belongs to a widget
