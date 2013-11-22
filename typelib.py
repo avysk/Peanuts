@@ -2,23 +2,23 @@
 
 # typelib.py (Type Class Library)
 # Copyright (c) 2000  David John Goodger
-# 
+#
 # This software is provided "as-is", without any express or implied warranty.
 # In no event will the authors be held liable for any damages arising from the
 # use of this software.
-# 
+#
 # Permission is granted to anyone to use this software for any purpose,
 # including commercial applications, and to alter it and redistribute it
 # freely, subject to the following restrictions:
-# 
+#
 # 1. The origin of this software must not be misrepresented; you must not
 # claim that you wrote the original software. If you use this software in a
 # product, an acknowledgment in the product documentation would be appreciated
 # but is not required.
-# 
+#
 # 2. Altered source versions must be plainly marked as such, and must not be
 # misrepresented as being the original software.
-# 
+#
 # 3. This notice may not be removed or altered from any source distribution.
 
 """
@@ -383,7 +383,7 @@ class String(Sequence, ModMixin):
     """ Emulates a Python string."""
 
     TYPE = type("")
-    
+
     def _reset(self):
         """ Initialize an empty string."""
         self.data = ""
@@ -428,7 +428,7 @@ class MutableSequence(Sequence, MutableMixin):
         return self.data.count(x)
 
     def extend(self, x):
-        """ Concatenates sequence 'x' to the end of 'self' in-place 
+        """ Concatenates sequence 'x' to the end of 'self' in-place
             (like 'self=self+x')."""
         self.data.extend(x)
 
@@ -438,7 +438,7 @@ class MutableSequence(Sequence, MutableMixin):
         return self.data.index(x)
 
     def insert(self, i, x):
-        """ Inserts object 'x' into 'self.data' at offset 'i' 
+        """ Inserts object 'x' into 'self.data' at offset 'i'
             (like 'self[i:i]=[x]')."""
         self.data.insert(i, x)
 
@@ -448,7 +448,7 @@ class MutableSequence(Sequence, MutableMixin):
         return self.data.pop(i)
 
     def remove(self, x):
-        """ Deletes the first occurrence of object 'x' from 'self.data'; 
+        """ Deletes the first occurrence of object 'x' from 'self.data';
             raise an exception if not found."""
         self.data.remove(x)
 
@@ -521,7 +521,7 @@ class Mapping(Container):
         return self.data.copy()
 
     def update(self, dict):
-        """ Merges 'dict' into 'self.data' 
+        """ Merges 'dict' into 'self.data'
             (i.e., 'for (k,v) in dict.items(): self.data[k]=v')."""
         self.data.update(dict)
 

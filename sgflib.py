@@ -2,17 +2,17 @@
 
 # sgflib.py (Smart Game Format Parser Library)
 # Copyright (C) 2000  David John Goodger (dgoodger@bigfoot.com)
-# 
+#
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
 # for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public License
 # (lgpl.txt) along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -407,7 +407,7 @@ class Node(Dictionary):
             return self.data[key]
 
     def __setitem__(self, key, x):
-        """ On 'self[key]=x'. Allows assignment to existing items only. Raises 
+        """ On 'self[key]=x'. Allows assignment to existing items only. Raises
             'DirectAccessError' on new item assignment."""
         if key in self:
             self.order[self.order.index(self[key])] = x
@@ -441,7 +441,7 @@ class Node(Dictionary):
             return ";"
 
     def update(self, dict):
-        """ 'Dictionary' method not applicable to 'Node'. Raises 
+        """ 'Dictionary' method not applicable to 'Node'. Raises
             'DirectAccessError'."""
         raise DirectAccessError(
             "The update() method is not supported by Node; use addProperty() instead.")
@@ -478,7 +478,7 @@ class Property(List):
         """
             Initialize the 'Property'. Arguments:
             - id : string
-            - name : string (optional) -- If not given, 'self.name' 
+            - name : string (optional) -- If not given, 'self.name'
             - nodelist : 'GameTree' or list of 'Node' -- Stored in 'self.data'.
             - variations : list of 'GameTree' -- Stored in 'self.variations'."""
         List.__init__(self, values)             # XXX will _convert work here?
