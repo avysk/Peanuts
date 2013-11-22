@@ -70,7 +70,7 @@ class Problem(object):
             self._over = true
             return
         # var stands for "variation"
-        for var in xrange(len(children)):
+        for var in range(len(children)):
             move = children[var].data['B'].data[0]
             var_x = Problem._char_to_index(move[0])
             var_y = Problem._char_to_index(move[1])

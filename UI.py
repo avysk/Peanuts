@@ -16,14 +16,14 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
-import Tkinter as T
-import ttk as TT
+import tkinter as T
+from tkinter import ttk as TT
 
 from BoardWidget import BoardWidget
 
 try:
-    import Image as I
-    import ImageTk as IT
+    from PIL import Image as I
+    from PIL import ImageTk as IT
     def _has_pil():
         return True
 except:

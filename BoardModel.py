@@ -33,21 +33,21 @@ class BoardModel(object):
         self._cursor = None
 
     def _alloc(self):
-        return [[None for i in xrange(self._size)]
-                for i in xrange(self._size)]
+        return [[None for i in range(self._size)]
+                for i in range(self._size)]
 
     def setup_position(self, setup):
         self._ko = None
         self._last_move = None
         self._board = self._alloc()
-        for color, coords in setup.iteritems():
+        for color, coords in setup.items():
             for nx, ny in coords:
                 self._board[nx][ny] = color
 
     def get_stones(self):
         return [(nx, ny, self._board[nx][ny])
-                for nx in xrange(self._size)
-                for ny in xrange(self._size)
+                for nx in range(self._size)
+                for ny in range(self._size)
                 if self._board[nx][ny] is not None]
 
     def get_ko(self):
@@ -100,8 +100,8 @@ class BoardModel(object):
         self._board[move_x][move_y] = self._move_color
         self._move_color = _cswap(self._move_color)
 
-        for i in xrange(19):
-            for j in xrange(19):
+        for i in range(19):
+            for j in range(19):
                 if killed[i][j]:
                     self._board[i][j] = None
         self._last_move = (move_x, move_y)
@@ -165,8 +165,8 @@ class BoardModel(object):
                         candidates.append((nx, ny))
         # If we got here, we found no escape route; mark all visited nodes
         # killed
-        for i in xrange(self._size):
-            for j in xrange(self._size):
+        for i in range(self._size):
+            for j in range(self._size):
                 if marked[i][j]:
                     killed[i][j] = True
 

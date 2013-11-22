@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8
 # Copyright (C) 2013 Alexey Vyskubov (alexey@ocaml.nl)
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -17,10 +16,10 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 import sys
-import Tkinter as T
-import tkMessageBox
+import tkinter as T
+from tkinter import messagebox as MB
 try:
-    import ttk as TT
+    from tkinter import ttk as TT
     def has_ttk():
         return not 'nottk' in sys.argv
 except:
@@ -28,8 +27,8 @@ except:
         return False
 
 try:
-    import Image as I
-    import ImageTk as IT
+    from PIL import Image as I
+    from PIL import ImageTk as IT
     def has_pil():
         return not 'no_pil' in sys.argv
 except:
@@ -40,15 +39,15 @@ from BoardController import BoardController
 from UI import UI
 
 def about():
-    tkMessageBox.showinfo("About", u"Peanuts v1.0.0.\n© 2013, Alexey Vyskubov")
+    MB.showinfo("About", "Peanuts v1.0.0.\n(c) 2013, Alexey Vyskubov")
 
 def preferences():
-    tkMessageBox.showerror("Preferences", "Preferences are not implemented.",
-            icon=tkMessageBox.ERROR)
+    MB.showerror("Preferences", "Preferences are not implemented.",
+            icon=MB.ERROR)
 
 def main():
     if not has_ttk():
-        tkMessageBox.showerror("No ttk",
+        MB.showerror("No ttk",
                 "No ttk module (Python/Tkinter too old?).\nPeanuts won't run.")
     else:
         controller = BoardController()
@@ -59,7 +58,7 @@ def main():
         controller.open_collection('problems/')
         controller.next_problem()
         if not has_pil():
-            tkMessageBox.showwarning("No PIL", "No PIL library found.")
+            MB.showwarning("No PIL", "No PIL library found.")
         ui.run()
 
 if __name__ == '__main__':

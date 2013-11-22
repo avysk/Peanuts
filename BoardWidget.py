@@ -15,7 +15,7 @@
 #
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
-from Tkinter import *
+from tkinter import *
 from Constants import Color
 
 class BoardWidget(Canvas):
@@ -31,8 +31,8 @@ class BoardWidget(Canvas):
         self.image = None
         self.texture = None
         if pil:
-            import Image as I
-            import ImageTk as IT
+            from PIL import Image as I
+            from PIL import ImageTk as IT
             self.image = I.open('images/wood.png')
             self.texture = IT.PhotoImage(self.image)
         self._resize()
@@ -54,13 +54,13 @@ class BoardWidget(Canvas):
         self.side = min(w, h)
         self.step = self.side / 20
         self.r = self.step / 2 - 1
-        self.points = [self.step * i for i in xrange(0, 21)]
+        self.points = [self.step * i for i in range(0, 21)]
 
     def _find_point(self, x):
         """
         Return the closest to x value in self.points and its index.
         """
-        ix = (x + (self.step / 2)) / self.step
+        ix = int((x + (self.step / 2)) / self.step)
         # Canvas may be non-square
         if ix > 20: ix = 20
         return self.points[ix], ix
@@ -91,7 +91,7 @@ class BoardWidget(Canvas):
                 joinstyle=MITER,
                 width=3)
         # Board lines
-        for i in xrange(17):
+        for i in range(17):
             step_i = self.step * (i + 2)
             self.create_line(start, step_i, end, step_i, width=1)
             self.create_line(step_i, start, step_i, end, width=1)

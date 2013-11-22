@@ -75,7 +75,8 @@ class BoardController(object):
 
     def get_stones(self):
         stones = self._model.get_stones()
-        def stone_to_board((nx, ny, s)):
+        def stone_to_board(arg):
+            nx, ny, s = arg
             nxb, nyb = self._to_board(nx, ny)
             c = self._fix_color(s)
             return (nxb, nyb, c)
