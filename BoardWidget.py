@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright (C) 2013 Alexey Vyskubov (alexey@ocaml.nl)
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -18,8 +19,8 @@
 from tkinter import *
 from Constants import Color
 
-class BoardWidget(Canvas):
 
+class BoardWidget(Canvas):
     def __init__(self, parent, controller=None, pil=False, **options):
         Canvas.__init__(self, parent, **options)
         self._controller = controller
@@ -62,7 +63,7 @@ class BoardWidget(Canvas):
         """
         ix = int((x + (self.step / 2)) / self.step)
         # Canvas may be non-square
-        if ix > 20: ix = 20
+        ix = min(ix, 20)
         return self.points[ix], ix
 
     def add_stone(self, nx, ny, color):
@@ -70,7 +71,7 @@ class BoardWidget(Canvas):
         x = self.points[nx + 1]
         y = self.points[ny + 1]
         self.create_oval(x - self.r, y - self.r, x + self.r, y + self.r,
-                fill = c)
+                         fill=c)
 
     def update_board(self):
         # Clean the board
@@ -83,13 +84,13 @@ class BoardWidget(Canvas):
         start = self.points[1]
         end = self.points[19]
         self.create_polygon(start, start,
-                end, start,
-                end, end,
-                start, end,
-                fill='',
-                outline='black',
-                joinstyle=MITER,
-                width=3)
+                            end, start,
+                            end, end,
+                            start, end,
+                            fill='',
+                            outline='black',
+                            joinstyle=MITER,
+                            width=3)
         # Board lines
         for i in range(17):
             step_i = self.step * (i + 2)
@@ -103,7 +104,7 @@ class BoardWidget(Canvas):
                 x = self.points[ix]
                 y = self.points[iy]
                 self.create_oval(x - hr, y - hr, x + hr, y + hr,
-                        fill='black')
+                                 fill='black')
         # Stones
         if self._controller:
             for nx, ny, c in self._controller.get_stones():
@@ -116,34 +117,33 @@ class BoardWidget(Canvas):
                 y = self.points[lmy + 1]
                 c = {Color.B: '#808080',
                      Color.W: '#A0A0A0'}[self._controller.to_move()]
-                o = {Color.B: 'black',
-                     Color.W: 'white'}[self._controller.to_move()]
+                # o = {Color.B: 'black',
+                #     Color.W: 'white'}[self._controller.to_move()]
                 r = hr * 2
                 self.create_oval(x - r, y - r, x + r, y + r,
-                        fill=c, outline='', width=1)
+                                 fill=c, outline='', width=1)
         # Ko
         self.update_ko()
-
 
     def update_ko(self):
         self.delete('ko')
         ko = self._controller.get_ko()
         if ko:
             nxb, nyb = ko
-            ko_size = max(self.step/5, 4)
+            ko_size = max(self.step / 5, 4)
             x = self.points[nxb + 1]
             y = self.points[nyb + 1]
             self.create_polygon(x - ko_size, y - ko_size,
-                    x + ko_size, y - ko_size,
-                    x + ko_size, y + ko_size,
-                    x - ko_size, y + ko_size,
-                    fill='',
-                    outline='black',
-                    joinstyle=MITER,
-                    width = 1,
-                    tag='ko')
+                                x + ko_size, y - ko_size,
+                                x + ko_size, y + ko_size,
+                                x - ko_size, y + ko_size,
+                                fill='',
+                                outline='black',
+                                joinstyle=MITER,
+                                width=1,
+                                tag='ko')
 
-    def resize(self, event):
+    def resize(self, _event):
         self._resize()
         self.update_board()
 
@@ -158,9 +158,9 @@ class BoardWidget(Canvas):
         if 0 < ix < 20 and 0 < iy < 20:
             if self._controller.allowed(nxb, nyb):
                 self.create_oval(x - self.r, y - self.r, x + self.r, y +
-                        self.r, tag='ghost', fill = c)
+                                 self.r, tag='ghost', fill=c)
 
-    def leave(self, event):
+    def leave(self, _event):
         self.delete('ghost')
 
     def click(self, event):
@@ -168,10 +168,10 @@ class BoardWidget(Canvas):
         y = event.y
         _, ix = self._find_point(x)
         _, iy = self._find_point(y)
-        if ix == 0 or ix == 20 or iy == 0 or iy == 20: return
+        if ix == 0 or ix == 20 or iy == 0 or iy == 20:
+            return
         nxb = ix - 1
         nyb = iy - 1
         if self._controller.allowed(nxb, nyb):
             self.delete('ghost')
             self._controller.add(nxb, nyb)
-

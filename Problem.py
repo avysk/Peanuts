@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright (C) 2013 Alexey Vyskubov (alexey@ocaml.nl)
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -15,9 +16,12 @@
 #
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
-from Constants import Color
-import sgflib
 import random
+
+import extlibs.sgflib as sgflib
+
+from Constants import Color
+
 
 class Problem(object):
     def __init__(self, sgf_string):
@@ -73,7 +77,8 @@ class Problem(object):
             var_y = Problem._char_to_index(move[1])
             if (var_x, var_y) == (move_x, move_y):
                 break
-        else: # variation is not found
+        else:
+            # variation is not found
             self._wrong = True
             self._over = True
             return

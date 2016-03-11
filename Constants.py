@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright (C) 2013 Alexey Vyskubov (alexey@ocaml.nl)
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -15,6 +16,8 @@
 #
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+
 class Color(object):
     B = 0
     W = 1
@@ -44,4 +47,3 @@ class Rotation(object):
                 Rotation.RIGHT: lambda n, m: (m, 18 - n),
                 Rotation.LEFT: lambda n, m: (18 - m, n),
                 Rotation.BOTH: lambda n, m: (18 - n, 18 - m)}[rotation]
-

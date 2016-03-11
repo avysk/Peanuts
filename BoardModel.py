@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright (C) 2013 Alexey Vyskubov (alexey@ocaml.nl)
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -16,8 +17,6 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 from Constants import Color
-import sgflib
-import random
 
 _cswap = Color.change_color(True)
 
@@ -87,7 +86,8 @@ class BoardModel(object):
                 if self._board[nx][ny] is None or (not self_killed[nx][ny]):
                     suicide = False
                     break
-            if suicide: return False
+            if suicide:
+                return False
         return we_kill, killed
 
     def do_move(self, move_x, move_y):
@@ -112,8 +112,7 @@ class BoardModel(object):
         return [(x, y) for (x, y) in
                 [(nx - 1, ny), (nx + 1, ny),
                  (nx, ny - 1), (nx, ny + 1)]
-                if 0 <= x < 19 and 0 <= y < 19 and \
-                (x != nx or y != ny)]
+                if 0 <= x < 19 and 0 <= y < 19 and (x != nx or y != ny)]
 
     def _find_killed(self, move_x, move_y, move_color):
         killed = self._alloc()
@@ -143,11 +142,13 @@ class BoardModel(object):
             ns = self._get_neighbours(*p)
             for nx, ny in ns:
                 # A neighbour of killing color, ignore
-                if self._board[nx][ny] == color: continue
+                if self._board[nx][ny] == color:
+                    continue
                 # Empty => all candidates are alive, unless the point is
                 # excluded
                 if self._board[nx][ny] is None:
-                    if (nx, ny) == excluded: continue
+                    if (nx, ny) == excluded:
+                        continue
                     alive[nx][ny] = True
                     mark_candidates(candidates, alive)
                     return
@@ -184,7 +185,8 @@ class BoardModel(object):
         ns = self._get_neighbours(kx, ky)
         for nx, ny in ns:  # outer
             # (1)
-            if self._board[nx][ny] != other_color: return None
+            if self._board[nx][ny] != other_color:
+                return None
             nns = self._get_neighbours(nx, ny)
             # (2)
             for nnx, nny in nns:  # inner
