@@ -34,13 +34,10 @@ class Problem(object):
         assert(data['FF'].data == ['4'])
         if 'HA' in data.keys():
             assert(data['HA'].data == ['0'])
-        self._setup = {}
-        self._setup[Color.B] =\
-                [(Problem._char_to_index(b[0]), Problem._char_to_index(b[1]))
-                        for b in data['AB']]
-        self._setup[Color.W] =\
-                [(Problem._char_to_index(w[0]), Problem._char_to_index(w[1]))
-                        for w in data['AW']]
+        self._setup = {Color.B: [(Problem._char_to_index(b[0]), Problem._char_to_index(b[1]))
+                                 for b in data['AB']],
+                       Color.W: [(Problem._char_to_index(w[0]), Problem._char_to_index(w[1]))
+                                 for w in data['AW']]}
         self._wrong = False
         self._over = False
 

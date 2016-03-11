@@ -25,35 +25,41 @@ from os.path import isfile, join
 from BoardModel import BoardModel
 from random import randint
 
+
 def _compose(outer, inner):
     """
     Given an inner function, which takes two arguments and produces 2-tuple,
     and an outer function, which takes two arguments, construct the
     composition of inner function, unpacking, and outer function.
     """
+
     def comp(arg1, arg2):
         return outer(*inner(arg1, arg2))
+
     return comp
+
 
 class Transform(object):
     """
     The class to do different transformations of the board:
     mirroring, rotation and color swap
     """
+
     def __init__(self):
         mirror = {0: lambda nx, ny: (nx, ny),
-                1: lambda nx, ny: (18 - nx, ny)}[randint(0, 1)]
+                  1: lambda nx, ny: (18 - nx, ny)}[randint(0, 1)]
         rotation = {
-                0: Rotation.NONE,
-                1: Rotation.RIGHT,
-                2: Rotation.LEFT,
-                3: Rotation.BOTH}[randint(0, 3)]
+            0: Rotation.NONE,
+            1: Rotation.RIGHT,
+            2: Rotation.LEFT,
+            3: Rotation.BOTH}[randint(0, 3)]
         swap = {0: False, 1: True}[randint(0, 1)]
         rotate = Rotation.rotate(rotation)
         unrotate = Rotation.unrotate(rotation)
         self.to_board = _compose(rotate, mirror)
         self.from_board = _compose(mirror, unrotate)
         self.fix_color = Color.change_color(swap)
+
 
 class BoardController(object):
     def __init__(self):
@@ -75,11 +81,13 @@ class BoardController(object):
 
     def get_stones(self):
         stones = self._model.get_stones()
+
         def stone_to_board(arg):
             nx, ny, s = arg
             nxb, nyb = self._to_board(nx, ny)
             c = self._fix_color(s)
             return (nxb, nyb, c)
+
         return map(stone_to_board, stones)
 
     def get_ko(self):
@@ -94,7 +102,7 @@ class BoardController(object):
         return self._model.allowed(nx, ny)
 
     def add(self, nxb, nyb):
-        assert(self._v_message)
+        assert (self._v_message)
         nx, ny = self._from_board(nxb, nyb)
         self._model.do_move(nx, ny)
         self._board_widget.update_board()
@@ -128,10 +136,10 @@ class BoardController(object):
         # FIXME
         self._directory = directory
         self._collection = [f for f in listdir(directory)
-                if isfile(join(directory, f))]
+                            if isfile(join(directory, f))]
 
     def next_problem(self):
-        assert(self._v_message)
+        assert (self._v_message)
         # FIXME
         l = len(self._collection)
         r = randint(0, l - 1)

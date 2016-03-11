@@ -21,6 +21,7 @@ import random
 
 _cswap = Color.change_color(True)
 
+
 class BoardModel(object):
     def __init__(self, size=19):
         self._size = size
@@ -91,7 +92,7 @@ class BoardModel(object):
 
     def do_move(self, move_x, move_y):
         ok = self.allowed(move_x, move_y)
-        assert(ok)
+        assert (ok)
         we_kill, killed = ok
 
         # Update ko position
@@ -106,12 +107,13 @@ class BoardModel(object):
                     self._board[i][j] = None
         self._last_move = (move_x, move_y)
 
-    def _get_neighbours(self, nx, ny):
+    @staticmethod
+    def _get_neighbours(nx, ny):
         return [(x, y) for (x, y) in
                 [(nx - 1, ny), (nx + 1, ny),
                  (nx, ny - 1), (nx, ny + 1)]
-                if x >= 0 and x < 19 and y >=0 and y < 19 and\
-                        (x != nx or y != ny)]
+                if 0 <= x < 19 and 0 <= y < 19 and \
+                (x != nx or y != ny)]
 
     def _find_killed(self, move_x, move_y, move_color):
         killed = self._alloc()
@@ -119,11 +121,11 @@ class BoardModel(object):
         other = _cswap(move_color)
         ns = self._get_neighbours(move_x, move_y)
         for nx, ny in ns:
-            if self._board[nx][ny] != other or\
+            if self._board[nx][ny] != other or \
                     killed[nx][ny] or alive[nx][ny]:
                 continue
             self._find_killed_from((nx, ny), (move_x, move_y),
-                    move_color, killed, alive)
+                                   move_color, killed, alive)
         return killed
 
     def _find_killed_from(self, start, excluded, color, killed, alive):
@@ -158,7 +160,7 @@ class BoardModel(object):
                     elif killed[nx][ny]:
                         # This cannot happen: to have n marked as killed we
                         # had to visit p beforehand
-                        assert(False)
+                        assert (False)
                     elif not marked[nx][ny]:
                         # If it is not already marked, it's a candidate
                         marked[nx][ny] = True
@@ -172,7 +174,7 @@ class BoardModel(object):
 
     def _check_for_ko(self, kx, ky):
         other_color = _cswap(self._move_color)
-        assert(self._board[kx][ky] is None)
+        assert (self._board[kx][ky] is None)
         # The following conditions have to be satisfied to get ko:
         # (1) (nx, ny) should be surrounded by the stones of other color
         # (2) one and only one of its neighbours should be surrounded by
@@ -180,19 +182,19 @@ class BoardModel(object):
 
         ko = None
         ns = self._get_neighbours(kx, ky)
-        for nx, ny in ns: # outer
+        for nx, ny in ns:  # outer
             # (1)
             if self._board[nx][ny] != other_color: return None
             nns = self._get_neighbours(nx, ny)
             # (2)
-            for nnx, nny in nns: # inner
+            for nnx, nny in nns:  # inner
                 # exclude ko point
                 if nnx == kx and nny == ky:
-                    continue # go to inner loop
+                    continue  # go to inner loop
                 # if this one won't be killed, proceed to the next neighbour
                 if self._board[nnx][nny] != self._move_color:
-                    break # go to outer loop
-            else: # inner
+                    break  # go to outer loop
+            else:  # inner
                 # if we got here, we got ko candidate
                 if ko is None:
                     ko = (nx, ny)
