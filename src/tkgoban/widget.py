@@ -16,6 +16,8 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
+import os.path
+
 import tkinter as tk
 from Constants import Color
 
@@ -26,7 +28,9 @@ class BoardWidget(tk.Canvas):
     Tkinter widget reperesenting Go board.
     """
 
-    def __init__(self, parent, controller=None, pil=False, **options):
+    def __init__(self, parent, controller=None,
+                 pil=False, resource_dir=None,
+                 **options):
         super(BoardWidget, self).__init__(parent, **options)
         self._controller = controller
         controller.register_board_widget(self)
@@ -37,9 +41,10 @@ class BoardWidget(tk.Canvas):
         self.image = None
         self.texture = None
         if pil:
+            assert resource_dir
             from PIL import Image as Im
             from PIL import ImageTk as IT
-            self.image = Im.open('images/wood.png')
+            self.image = Im.open(os.path.join(resource_dir, 'wood.png'))
             self.texture = IT.PhotoImage(self.image)
         self._resize()
 
@@ -83,7 +88,7 @@ class BoardWidget(tk.Canvas):
 
     def update_board(self):
         # Clean the board
-        self.delete(ALL)
+        self.delete(tk.ALL)
         # Draw the texture
         if self.texture:
             center = self._points[10]
@@ -97,7 +102,7 @@ class BoardWidget(tk.Canvas):
                             start, end,
                             fill='',
                             outline='black',
-                            joinstyle=MITER,
+                            joinstyle=tk.MITER,
                             width=3)
         # Board lines
         for i in range(17):
@@ -149,7 +154,7 @@ class BoardWidget(tk.Canvas):
                                 x - ko_size, y + ko_size,
                                 fill='',
                                 outline='black',
-                                joinstyle=MITER,
+                                joinstyle=tk.MITER,
                                 width=1,
                                 tag='ko')
 

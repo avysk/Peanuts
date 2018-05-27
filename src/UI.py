@@ -16,30 +16,39 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
+import os.path
+
 import tkinter as T
 from tkinter import ttk as TT
 
 from tkgoban import BoardWidget
 
 try:
-    from PIL import Image as I
-    from PIL import ImageTk as IT
+    from PIL import Image
+    from PIL import ImageTk
+
     def _has_pil():
         return True
-except:
+
+except ModuleNotFoundError:
     def _has_pil():
         return False
 
-class UI(object):
+
+class UI:
     def __init__(self, about=None, preferences=None,
-            controller=None,
-            app_title='Peanuts',
-            min_board_width=400,
-            board_width=500,
-            no_pil = False):
+                 controller=None,
+                 app_title='Peanuts',
+                 min_board_width=400,
+                 board_width=500,
+                 resource_dir=None,
+                 no_pil=False):
         self._controller = controller
         self._min_board_width = min_board_width
         self._has_pil = not no_pil and _has_pil()
+        if self._has_pil:
+            assert resource_dir
+        self._resource_dir = resource_dir
         self._toplevel = self._create_toplevel(app_title, about, preferences)
         self._root = self._create_root()
         self._boardplacer = None
@@ -109,11 +118,11 @@ class UI(object):
         padding = TT.Frame(left_frame, width=board_width, height=board_width)
         padding.grid(row=0, column=0, sticky=T.W+T.E+T.N+T.S)
         # Board
-        board = BoardWidget(left_frame, controller = self._controller,
-                pil=self._has_pil,
-                width=board_width, height=board_width,
-                background='yellow', highlightthickness=0,
-                cursor='hand1')
+        board = BoardWidget(left_frame, controller=self._controller,
+                            pil=self._has_pil, resource_dir=self._resource_dir,
+                            width=board_width, height=board_width,
+                            background='yellow', highlightthickness=0,
+                            cursor='hand1')
         self._boardplacer = _BoardPlacer(board, padding)
         # Message label
         v_message = T.StringVar()
@@ -141,8 +150,8 @@ class UI(object):
         # Next problem button
         image_next = None
         if self._has_pil:
-            img = I.open('images/next.gif')
-            image_next = IT.PhotoImage(img)
+            img = Image.open(os.path.join(self._resource_dir, 'next.gif'))
+            image_next = ImageTk.PhotoImage(img)
             # Tk bug workaround: images are garbage-collected if the only
             # reference belongs to a widget
             self._images.append(image_next)

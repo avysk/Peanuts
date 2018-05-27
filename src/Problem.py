@@ -16,7 +16,7 @@
 # The license is currently available on the Internet at:
 #     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 from Constants import Color
-import sgflib
+from third_party import sgflib
 import random
 
 class Problem(object):

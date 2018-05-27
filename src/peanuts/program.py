@@ -35,31 +35,36 @@ except:
     def has_pil():
         return False
 
-from BoardController import BoardController
+from tkgoban import BoardController
 from UI import UI
+
 
 def about():
     MB.showinfo("About", "Peanuts v1.0.0.\n(c) 2013, Alexey Vyskubov")
+
 
 def preferences():
     MB.showerror("Preferences", "Preferences are not implemented.",
             icon=MB.ERROR)
 
-def main():
+
+def main(resource_dir, problems_dir):
     if not has_ttk():
         MB.showerror("No ttk",
-                "No ttk module (Python/Tkinter too old?).\nPeanuts won't run.")
+                     "No ttk module (Python/Tkinter too old?).\n"
+                     "Peanuts won't run.")
     else:
         controller = BoardController()
         ui = UI(about=about, preferences=preferences, controller=controller,
                 app_title='Peanuts',
                 min_board_width=400, board_width=500,
+                resource_dir=resource_dir,
                 no_pil=('no_pil' in sys.argv))
-        controller.open_collection('problems/')
+        controller.open_collection(problems_dir)
         controller.next_problem()
         if not has_pil():
             MB.showwarning("No PIL", "No PIL library found.")
         ui.run()
 
 if __name__ == '__main__':
-    main()
+    main("res", "problems")

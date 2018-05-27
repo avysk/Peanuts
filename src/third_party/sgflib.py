@@ -62,7 +62,7 @@ objects is the Smart Game Format itself."""
 
 
 import string, re
-from typelib import List, Dictionary
+from .typelib import List, Dictionary
 
 
 # Parsing Exceptions
